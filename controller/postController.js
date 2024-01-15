@@ -1,9 +1,8 @@
 const Post = require("../models/Post");
-const redis = require("redis");
 const { getFromCache, analyzePost, setInCache } = require('../utils/services');
 
 // Connect to Redis
-const redisClient = redis.createClient();
+const {redisClient }= require("../index");
 
 // Post Creation Endpoint
 exports.createPost = async (req, res) => {
@@ -18,11 +17,10 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// Analysis Endpoint
 exports.getAnalysis = async (req, res) => {
   try {
     const postId = req.params.id;
-    const cachedResult = await getFromCache(postId);
+    const cachedResult = await getFromCache(postId, req.redisClient);
 
     if (cachedResult) {
       res.json(cachedResult);
@@ -33,7 +31,7 @@ exports.getAnalysis = async (req, res) => {
       }
 
       const analysisResult = analyzePost(post.text);
-      await setInCache(postId, analysisResult);
+      await setInCache(postId, analysisResult, req.redisClient);
 
       res.json(analysisResult);
     }
