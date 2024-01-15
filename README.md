@@ -17,5 +17,8 @@ Redis:
 #### GET: /api/v1/posts/:id/analysis
 
 ### 
+#### 
+Limit Rating: The application includes rate limiting based on IP using Express.js middleware. We made a separate middleware in the Middleware section for this purpose.
+#### 
 Redis is used for Caching part!
 
