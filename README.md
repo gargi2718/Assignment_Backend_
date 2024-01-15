@@ -17,4 +17,5 @@ Redis:
 #### GET: /api/v1/posts/:id/analysis
 
 ### 
+Redis is used for Caching part!
 
