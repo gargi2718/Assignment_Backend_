@@ -7,9 +7,14 @@
 ### Deployment link :
 
 ### Tech Stack:
-Express.js: A web application framework for building APIs and handling server-side logic.
-Node.js: A runtime environment for executing JavaScript code on the server.
-Redis: An in-memory data structure store used for caching.
+Express.js:
+Node.js:
+MongoDB:
+Redis:
 
-### APIS
+### APIS:
+#### POST : /api/v1/posts/
+#### GET: /api/v1/posts/:id/analysis
+
+### 
 
