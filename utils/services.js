@@ -1,36 +1,41 @@
 
-// Connect to Redis
-const redis = require("redis");
-const redisClient = redis.createClient();
-/*
-const redis = require("redis");
+const { promisify } = require("util");
+let redisClient;
 
-const { createClient } = require("redis-mock"); // For testing, you can use a mock library
+if (process.env.NODE_ENV === "production") {
+  const redis = require("redis");
+  redisClient = redis.createClient();
 
-const redisClient = createClient();*/
-
-
-// Helper function to get data from Redis cache
-function getFromCache(key) {
-  return new Promise((resolve, reject) => {
-    redisClient.get(key, (error, result) => {
-      if (error) reject(error);
-      resolve(result ? JSON.parse(result) : null);
-    });
+  redisClient.on("error", (err) => {
+    console.error("Redis error:", err);
   });
+} else {
+  // Use the mock client for development
+  const { createClient } = require("redis-mock");
+  redisClient = createClient();
 }
 
-// Helper function to set data in Redis cache
+const getAsync = promisify(redisClient.get).bind(redisClient);
+
+async function getFromCache(key) {
+  try {
+    const cachedData = await getAsync(key);
+    return cachedData ? JSON.parse(cachedData) : null;
+  } catch (error) {
+    console.error("Error in getFromCache:", error);
+    throw error;
+  }
+}
+
 function setInCache(key, value) {
-  return new Promise((resolve, reject) => {
-    redisClient.set(key, 3600, JSON.stringify(value), (error) => {
-      if (error) reject(error);
-      resolve();
-    });
-  });
+  try {
+    redisClient.set(key, JSON.stringify(value));
+  } catch (error) {
+    console.error("Error in setInCache:", error);
+    throw error;
+  }
 }
 
-// Dummy analysis function
 function analyzePost(text) {
   const words = text.split(/\s+/);
   const wordCount = words.length;
@@ -44,3 +49,4 @@ function analyzePost(text) {
 }
 
 module.exports = { getFromCache, analyzePost, setInCache };
+
