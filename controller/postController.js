@@ -1,7 +1,7 @@
 const Post = require("../models/Post");
 const { getFromCache, analyzePost, setInCache } = require('../utils/services');
 
-// Connect to Redis
+// Connect to Redis from index 
 const {redisClient }= require("../index");
 
 // Post Creation Endpoint
